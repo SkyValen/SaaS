@@ -21,7 +21,7 @@ app.use(
         issuerBaseURL: process.env.AUTH0_ISSUER_BASE_URL
     })
 )
-
+//hey
 app.get("/api/info", (req, res) => {
     res.status(200).json({
         missioon: "Iseseisev deploimine edukas",
