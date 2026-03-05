@@ -39,26 +39,33 @@ app.get("/", (req, res) => {
 })
 
 app.post("/create-checkout-session", async (req, res) => {
-    const session = await stripe.checkout.sessions.create({
-        payment_method_types: ["card"],
-        line_items: [
-            {
-                price_data: {
-                    currency: "eur",
-                    product_data: {
-                        name: "Premium access"
+    try {
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ["card"],
+            line_items: [
+                {
+                    price_data: {
+                        currency: "eur",
+                        product_data: {
+                            name: "Premium access"
+                        },
+                        unit_amount: 500
                     },
-                    unit_amount: 500
-                },
-                quantity: 1
-            }
-        ],
-        mode: "payment",
-        success_url: `${process.env.AUTH0_BASE_URL}/success`,
-        cancel_url: `${process.env.AUTH0_BASE_URL}/`
-    });
+                    quantity: 1
+                }
+            ],
+            mode: "payment",
+            success_url: `${process.env.AUTH0_BASE_URL}/success`,
+            cancel_url: `${process.env.AUTH0_BASE_URL}/`
+        });
 
-    res.json({ url: session.url });
+        res.json({ url: session.url });
+    } catch (e) {
+        console.error(e)
+        res.status(500).json({
+            message: "Something wend wrong"
+        })
+    }
 });
 app.get("/success", (req, res) => {
     res.send("Payment successful");
