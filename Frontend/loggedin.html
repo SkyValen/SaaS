@@ -16,12 +16,15 @@
 
     <script>
         document.getElementById("pay").onclick = async () => {
-            const res = await fetch("/create-checkout-session", {
-                method: "POST"
-            });
-
-            const data = await res.json();
-            window.location = data.url;
+            try {
+                const res = await fetch("/create-checkout-session", { method: "POST" });
+                const data = await res.json();
+                if (data.url) window.location = data.url;
+                else alert("Stripe session not created");
+            } catch (err) {
+                console.error(err);
+                alert("Server error. Check console logs");
+            }
         }
     </script>
 </body>

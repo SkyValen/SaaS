@@ -67,6 +67,7 @@ app.post("/create-checkout-session", async (req, res) => {
         })
     }
 });
+
 app.get("/success", (req, res) => {
     res.send("Payment successful");
 });
