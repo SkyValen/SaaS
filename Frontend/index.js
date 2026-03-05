@@ -1,5 +1,5 @@
-const epxress = require('express');
-const app = epxress();
+const express = require('express');
+const app = express();
 
 let NIMI = process.env.TEAM_NAME || "Unknown Team";
 let PORT = process.env.PORT || 3000;
