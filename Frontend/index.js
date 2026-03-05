@@ -12,6 +12,15 @@ app.get("/api/info", (req, res) => {
     });
 });
 
+app.get("/login", (req, res) => {
+    res.status(200)
+    return (
+        <div>
+            <h1>Login Page</h1>
+        </div>
+    )
+})
+
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Api Server töötab selle pordi peale${PORT}`);
 })
