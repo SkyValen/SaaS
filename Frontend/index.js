@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require("path");
 const app = express();
 
 let NIMI = process.env.TEAM_NAME || "Unknown Team";
@@ -12,9 +13,9 @@ app.get("/api/info", (req, res) => {
     });
 });
 
-app.post("/login", (req, res) => {
+app.get("/", (req, res) => {
     console.log(req.body)
-    res.status(200).json(req.body)
+    res.sendFile(path.join(__dirname, "index.html"))
 })
 
 app.listen(PORT, '0.0.0.0', () => {
