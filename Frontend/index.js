@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require("path");
 const app = express();
-const { auth } = require("express-openid-connect")
+const { auth, requiresAuth } = require("express-openid-connect")
 
 let NIMI = process.env.TEAM_NAME || "Unknown Team";
 let PORT = process.env.PORT || 3000;
@@ -34,6 +34,10 @@ app.get("/", (req, res) => {
     } else {
         res.sendFile(path.join(__dirname, "index.html"))
     }
+})
+
+app.get("/dashboard", requiresAuth(), (req, res) => {
+    res.sendFile(path.join(__dirname, "loggedin.html"))
 })
 
 app.listen(PORT, '0.0.0.0', () => {
