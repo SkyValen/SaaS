@@ -2,6 +2,8 @@ const express = require('express');
 const path = require("path");
 const app = express();
 const { auth, requiresAuth } = require("express-openid-connect")
+const Stripe = require("stripe");
+const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
 let NIMI = process.env.TEAM_NAME || "Unknown Team";
 let PORT = process.env.PORT || 3000;
@@ -36,9 +38,31 @@ app.get("/", (req, res) => {
     }
 })
 
-app.get("/dashboard", requiresAuth(), (req, res) => {
-    res.sendFile(path.join(__dirname, "loggedin.html"))
-})
+app.post("/create-checkout-session", async (req, res) => {
+    const session = await stripe.checkout.sessions.create({
+        payment_method_types: ["card"],
+        line_items: [
+            {
+                price_data: {
+                    currency: "eur",
+                    product_data: {
+                        name: "Premium access"
+                    },
+                    unit_amount: 500
+                },
+                quantity: 1
+            }
+        ],
+        mode: "payment",
+        success_url: `${process.env.AUTH0_BASE_URL}/success`,
+        cancel_url: `${process.env.AUTH0_BASE_URL}/`
+    });
+
+    res.json({ url: session.url });
+});
+app.get("/success", (req, res) => {
+    res.send("Payment successful");
+});
 
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Api Server töötab selle pordi peale${PORT}`);
