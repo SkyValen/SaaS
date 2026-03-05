@@ -6,6 +6,8 @@ const { auth } = require("express-openid-connect")
 let NIMI = process.env.TEAM_NAME || "Unknown Team";
 let PORT = process.env.PORT || 3000;
 
+app.set('trust proxy', 1)
+
 app.use(
     auth({
         authRequired: false,
