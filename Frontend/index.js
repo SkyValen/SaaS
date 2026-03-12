@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require("path");
-const PocketBase = require('pocketbase').PocketBase;
+const PocketBase = require("pocketbase/cjs");
 
 const app = express();
 const NIMI = process.env.TEAM_NAME || "Unknown Team";
