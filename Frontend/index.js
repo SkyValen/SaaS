@@ -10,6 +10,10 @@ app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "index.html"))
 })
 
+app.get("/login", (req, res) => {
+    res.sendFile(__dirname, "loggedin.html")
+})
+
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Api Server töötab selle pordi peale${PORT}`);
 })
