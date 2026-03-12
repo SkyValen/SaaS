@@ -6,7 +6,28 @@ const app = express();
 const NIMI = process.env.TEAM_NAME || "Unknown Team";
 const PORT = process.env.PORT || 3000;
 
+// ✅ Проверяем, что DATABASE задана
+if (!process.env.DATABASE) {
+    console.error('❌ FATAL: DATABASE environment variable is not set!');
+    process.exit(1);
+}
+
+console.log('🔌 Connecting to PocketBase:', process.env.DATABASE);
 const pb = new PocketBase(process.env.DATABASE);
+
+// ✅ Тестовый эндпоинт для проверки подключения
+app.get("/health", (req, res) => {
+    res.json({ status: "ok", team: NIMI });
+});
+
+app.get("/test-db", async (req, res) => {
+    try {
+        const records = await pb.collection('grades').getFirstListItem("id != ''");
+        res.json({ success: true, sample: records });
+    } catch (e) {
+        res.status(500).json({ success: false, error: e.message });
+    }
+});
 
 app.get("/", async (req, res) => {
     try {
@@ -60,7 +81,7 @@ app.get("/", async (req, res) => {
         `;
         res.send(html);
     } catch (error) {
-        console.error('Viga andmete pärimisel:', error);
+        console.error('❌ Viga andmete pärimisel:', error.message);
         res.status(500).send(`
             <!DOCTYPE html>
             <html>
@@ -68,7 +89,7 @@ app.get("/", async (req, res) => {
             <body>
                 <h1>🔴 Viga</h1>
                 <p>Andmebaasiga ühenduse loomisel tekkis viga.</p>
-                <p>Proovige hiljem uuesti.</p>
+                <p><a href="/test-db">Проверить подключение к БД</a></p>
                 <p><small>${error.message}</small></p>
             </body>
             </html>
@@ -80,7 +101,17 @@ app.get("/login", (req, res) => {
     res.sendFile(path.join(__dirname, "loggedin.html"));
 });
 
+// ✅ Приложение слушает ВСЕ интерфейсы
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Api Server töötab pordil ${PORT}`);
-    console.log(`PocketBase URL: ${process.env.DATABASE}`);
+    console.log(`✅ Server started on port ${PORT}`);
+    console.log(`✅ Health check: http://localhost:${PORT}/health`);
+    console.log(`✅ DB test: http://localhost:${PORT}/test-db`);
+});
+
+// ✅ Обработка незапланированных ошибок (чтобы не падало)
+process.on('uncaughtException', (err) => {
+    console.error('❌ Uncaught Exception:', err.message);
+});
+process.on('unhandledRejection', (reason) => {
+    console.error('❌ Unhandled Rejection:', reason);
 });
