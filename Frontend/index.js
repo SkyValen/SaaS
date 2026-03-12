@@ -2,8 +2,9 @@ const express = require('express');
 const path = require("path");
 const app = express();
 
-let NIMI = process.env.TEAM_NAME || "Unknown Team";
-let PORT = process.env.PORT || 3000;
+const NIMI = process.env.TEAM_NAME || "Unknown Team";
+const PORT = process.env.PORT || 3000;
+const DATABASE = process.env.DATABASE
 
 
 app.get("/", (req, res) => {
